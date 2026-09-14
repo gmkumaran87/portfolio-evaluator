@@ -1,0 +1,31 @@
+version: "3.8"
+
+services:
+  redis:
+    image: redis:alpine
+    ports:
+      - "6379:6379"
+
+  backend:
+    build:
+      context: .
+    ports:
+      - "3001:3001"
+    volumes:
+      - ./data:/app/data
+      - ./src:/app/src
+    depends_on:
+      - redis
+    environment:
+      # If you update your backend to use process.env.REDIS_URL, it will connect here
+      - REDIS_URL=redis://redis:6379
+
+  frontend:
+    build:
+      context: ./frontend
+    ports:
+      - "5173:5173"
+    volumes:
+      - ./frontend/src:/app/src
+    depends_on:
+      - backend

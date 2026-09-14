@@ -1,9 +1,15 @@
 import { Queue } from "bullmq";
 import { AxisHolding } from "../PortfolioWatcher";
 
-const connection = {
+/*const connection = {
   host: process.env.REDIS_HOST || "localhost",
   port: parseInt(process.env.REDIS_PORT || "6379"),
+};*/
+
+// Replace the connection object with this:
+const connection = {
+  host: "redis",
+  port: 6379,
 };
 
 export const portfolioQueue = new Queue<{ holdings: AxisHolding[] }>(

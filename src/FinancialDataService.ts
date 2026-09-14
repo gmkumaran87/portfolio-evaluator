@@ -1,6 +1,10 @@
-import yahooFinance from "yahoo-finance2";
+import YahooFinance from "yahoo-finance2";
 import { createClient, RedisClientType } from "redis";
 
+// Fix: remove 'nodeVersion' from the suppressNotices array
+const yahooFinance = new YahooFinance({
+  suppressNotices: ["yahooSurvey"],
+});
 export interface Fundamentals {
   symbol: string;
   peRatio: number | null;
@@ -14,9 +18,10 @@ export class FinancialDataService {
   private redisClient: RedisClientType;
 
   constructor() {
-    this.redisClient = createClient({
-      url: process.env.REDIS_URL || "redis://localhost:6379",
-    });
+    // this.redisClient = createClient({
+    //   url: process.env.REDIS_URL || "redis://localhost:6379",
+    // });
+    this.redisClient = createClient({ url: "redis://localhost:6379" });
 
     this.redisClient.on("error", (err) =>
       console.error("[Redis] Error:", err.message),

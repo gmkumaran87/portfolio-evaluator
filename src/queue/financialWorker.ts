@@ -2,9 +2,16 @@ import { Worker, Job } from "bullmq";
 import { AxisHolding } from "../PortfolioWatcher";
 import { FinancialDataService, Fundamentals } from "../FinancialDataService";
 
-const connection = {
+/*const connection = {
   host: process.env.REDIS_HOST || "localhost",
   port: parseInt(process.env.REDIS_PORT || "6379"),
+};*/
+
+// Replace the old connection object with this:
+// Replace the connection object with this:
+const connection = {
+  host: "redis",
+  port: 6379,
 };
 
 export interface EnrichedHolding extends AxisHolding {
@@ -41,6 +48,10 @@ export function startFinancialWorker() {
           EBITDA_Margin: item.fundamentals?.ebitdaMargin ?? "N/A",
         })),
       );
+
+      // Save the latest enriched portfolio to Redis for the API to consume
+      const redisClient = finService["redisClient"]; // Accessing the existing client
+      await redisClient.set("portfolio:latest", JSON.stringify(enrichedList));
 
       return enrichedList;
     },
